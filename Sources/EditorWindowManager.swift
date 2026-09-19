@@ -1,6 +1,17 @@
 import Cocoa
 import SwiftUI
 
+final class EditorWindow: NSWindow {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+}
+
+final class FirstMouseHostingView<Content: View>: NSHostingView<Content> {
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool {
+        return true
+    }
+}
+
 final class EditorWindowManager: NSObject, NSWindowDelegate {
     static let shared = EditorWindowManager()
 
@@ -44,7 +55,7 @@ final class EditorWindowManager: NSObject, NSWindowDelegate {
         let initialY = (screenFrame.height - desiredHeight) / 2 + screenFrame.minY
         let targetFrame = NSRect(x: initialX, y: initialY, width: desiredWidth, height: desiredHeight)
 
-        let window = NSWindow(
+        let window = EditorWindow(
             contentRect: targetFrame,
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
@@ -66,10 +77,10 @@ final class EditorWindowManager: NSObject, NSWindowDelegate {
             }
         )
 
-        let hostingController = NSHostingController(rootView: rootView)
-        window.contentViewController = hostingController
+        let hostingView = FirstMouseHostingView(rootView: rootView)
+        window.contentView = hostingView
 
-        // Force the window frame and content size AFTER assigning contentViewController
+        // Force the window frame and content size AFTER assigning contentView
         window.setFrame(targetFrame, display: true, animate: false)
         window.setContentSize(NSSize(width: desiredWidth, height: desiredHeight))
 

@@ -4,68 +4,15 @@ import Carbon
 
 final class ScreenCaptureEngine {
     static let shared = ScreenCaptureEngine()
-    private var isCapturing = false
-    private let queue = DispatchQueue(label: "com.quickcapture.engine", qos: .userInteractive)
 
     private init() {}
 
     func captureToClipboard() {
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            guard !self.isCapturing else { return }
-            self.isCapturing = true
-            defer { self.isCapturing = false }
-
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
-            // -i: interactive selection (crosshair)
-            // -c: copy directly to clipboard
-            process.arguments = ["-i", "-c"]
-
-            do {
-                try process.run()
-                process.waitUntilExit()
-            } catch {
-                NSLog("[QuickCapture] Error running screencapture: \(error.localizedDescription)")
-            }
-        }
+        ScreenCaptureOverlayCoordinator.shared.startSelection(mode: .clipboard)
     }
 
     func captureForAnnotation() {
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            guard !self.isCapturing else { return }
-            self.isCapturing = true
-            defer { self.isCapturing = false }
-
-            let tempDir = FileManager.default.temporaryDirectory
-            let tempFileURL = tempDir.appendingPathComponent("quickcapture_\(UUID().uuidString).png")
-
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
-            // -i: interactive selection (crosshair)
-            // Save to temp file
-            process.arguments = ["-i", tempFileURL.path]
-
-            do {
-                try process.run()
-                process.waitUntilExit()
-            } catch {
-                NSLog("[QuickCapture] Error running screencapture: \(error.localizedDescription)")
-                return
-            }
-
-            // Check if file was captured (user didn't press Esc)
-            guard FileManager.default.fileExists(atPath: tempFileURL.path),
-                  let image = NSImage(contentsOf: tempFileURL) else {
-                try? FileManager.default.removeItem(at: tempFileURL)
-                return
-            }
-
-            DispatchQueue.main.async {
-                EditorWindowManager.shared.openEditor(with: image, tempURL: tempFileURL)
-            }
-        }
+        ScreenCaptureOverlayCoordinator.shared.startSelection(mode: .annotation)
     }
 }
 

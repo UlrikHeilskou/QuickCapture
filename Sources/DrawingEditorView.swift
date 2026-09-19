@@ -113,18 +113,22 @@ struct DrawingEditorView: View {
                                 .lineLimit(1)
                         }
                         .frame(width: 50, height: 34)
+                        .contentShape(RoundedRectangle(cornerRadius: 5))
                         .background(
-                            selectedTool == tool
-                                ? Color.accentColor.opacity(0.2)
-                                : Color.clear
+                            RoundedRectangle(cornerRadius: 5)
+                                .fill(
+                                    selectedTool == tool
+                                        ? Color.accentColor.opacity(0.2)
+                                        : Color.white.opacity(0.001)
+                                )
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
                                 .stroke(selectedTool == tool ? Color.accentColor : Color.gray.opacity(0.25), lineWidth: selectedTool == tool ? 1.5 : 0.5)
                         )
-                        .cornerRadius(5)
                     }
                     .buttonStyle(.plain)
+                    .contentShape(RoundedRectangle(cornerRadius: 5))
                     .help(tool.label)
                 }
             }
@@ -155,11 +159,13 @@ struct DrawingEditorView: View {
                 }
                 .frame(height: 26)
                 .padding(.horizontal, 6)
+                .contentShape(RoundedRectangle(cornerRadius: 5))
                 .background(Color.gray.opacity(0.15))
                 .cornerRadius(5)
             }
             .menuStyle(.borderlessButton)
             .fixedSize()
+            .contentShape(RoundedRectangle(cornerRadius: 5))
             .help("Stroke Width")
 
             Divider().frame(height: 24)
@@ -185,8 +191,12 @@ struct DrawingEditorView: View {
                                     .frame(width: 21, height: 21)
                             }
                         }
+                        .frame(width: 24, height: 24)
+                        .contentShape(Circle())
+                        .background(Color.white.opacity(0.001))
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Circle())
                 }
 
                 ColorPicker("", selection: $selectedColor)
@@ -210,10 +220,12 @@ struct DrawingEditorView: View {
                     }
                     .padding(.horizontal, 6)
                     .padding(.vertical, 4)
-                    .background(undoStack.isEmpty ? Color.clear : Color.gray.opacity(0.15))
+                    .contentShape(RoundedRectangle(cornerRadius: 5))
+                    .background(undoStack.isEmpty ? Color.white.opacity(0.001) : Color.gray.opacity(0.15))
                     .cornerRadius(5)
                 }
                 .buttonStyle(.plain)
+                .contentShape(RoundedRectangle(cornerRadius: 5))
                 .disabled(undoStack.isEmpty)
                 .keyboardShortcut("z", modifiers: .command)
                 .help("Undo (⌘Z)")
@@ -229,10 +241,12 @@ struct DrawingEditorView: View {
                     }
                     .padding(.horizontal, 6)
                     .padding(.vertical, 4)
-                    .background(redoStack.isEmpty ? Color.clear : Color.gray.opacity(0.15))
+                    .contentShape(RoundedRectangle(cornerRadius: 5))
+                    .background(redoStack.isEmpty ? Color.white.opacity(0.001) : Color.gray.opacity(0.15))
                     .cornerRadius(5)
                 }
                 .buttonStyle(.plain)
+                .contentShape(RoundedRectangle(cornerRadius: 5))
                 .disabled(redoStack.isEmpty)
                 .keyboardShortcut("z", modifiers: [.command, .shift])
                 .help("Redo (⇧⌘Z)")
@@ -246,8 +260,10 @@ struct DrawingEditorView: View {
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(elements.isEmpty ? .secondary : .red)
                         .padding(4)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .contentShape(Rectangle())
                 .disabled(elements.isEmpty)
                 .help("Clear All Drawings")
             }

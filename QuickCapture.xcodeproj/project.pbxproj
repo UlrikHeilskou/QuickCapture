@@ -13,9 +13,11 @@
 		B7FFF0CFF26A1C17CB510C87 /* EditorWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4569478C8A35E2051A888579 /* EditorWindowManager.swift */; };
 		D943DDCFED9C82A3A0950199 /* DrawingRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C9DD09CA3FA1FA4D1AE2B0 /* DrawingRenderer.swift */; };
 		E1E932E2D3C071E54755EFBA /* DrawingEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD91043717304C926DE41D1F /* DrawingEditorView.swift */; };
+		EB580889249EB41F72BF3BE2 /* ScreenCaptureOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B989F229E03E38E4364F33 /* ScreenCaptureOverlay.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		04B989F229E03E38E4364F33 /* ScreenCaptureOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureOverlay.swift; sourceTree = "<group>"; };
 		4569478C8A35E2051A888579 /* EditorWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorWindowManager.swift; sourceTree = "<group>"; };
 		57C9DD09CA3FA1FA4D1AE2B0 /* DrawingRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingRenderer.swift; sourceTree = "<group>"; };
 		5C5FF15479C87A38DDC06D24 /* QuickCapture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QuickCapture.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -61,6 +63,7 @@
 				57C9DD09CA3FA1FA4D1AE2B0 /* DrawingRenderer.swift */,
 				4569478C8A35E2051A888579 /* EditorWindowManager.swift */,
 				6576DEEB7FFA3286572FA5C8 /* main.swift */,
+				04B989F229E03E38E4364F33 /* ScreenCaptureOverlay.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -139,6 +142,7 @@
 				8C86D48EC584A4FA288E721F /* DrawingModels.swift in Sources */,
 				D943DDCFED9C82A3A0950199 /* DrawingRenderer.swift in Sources */,
 				B7FFF0CFF26A1C17CB510C87 /* EditorWindowManager.swift in Sources */,
+				EB580889249EB41F72BF3BE2 /* ScreenCaptureOverlay.swift in Sources */,
 				86A649E8DD461858650F50AD /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
