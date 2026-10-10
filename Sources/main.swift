@@ -30,6 +30,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupMenu()
         setupHotkeys()
         setupLaunchAtLoginInitialState()
+
+        DistributedNotificationCenter.default().addObserver(
+            self,
+            selector: #selector(openPreferencesAction),
+            name: NSNotification.Name("com.ulrik.QuickCapture.openPreferences"),
+            object: nil
+        )
+
+        if CommandLine.arguments.contains("--preferences") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                PreferencesWindowManager.shared.showPreferences()
+            }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            UpdateManager.shared.checkForUpdates(silent: true)
+        }
     }
 
     func setupStatusItem() {
