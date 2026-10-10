@@ -7,10 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D4E1B80A186DD78B646745F /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E722500A628EBB72E622D5A9 /* HotkeyManager.swift */; };
+		44E763309CE3C666F69B060A /* PreferencesWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEC2BC88E09D485E4E7807C /* PreferencesWindowManager.swift */; };
 		86A649E8DD461858650F50AD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6576DEEB7FFA3286572FA5C8 /* main.swift */; };
 		8C86D48EC584A4FA288E721F /* DrawingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B3946AA23003E8F4EFC6EA /* DrawingModels.swift */; };
 		A717034FB781C2B06A843DF6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1732C165C91EBBD70B91131 /* Assets.xcassets */; };
 		B7FFF0CFF26A1C17CB510C87 /* EditorWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4569478C8A35E2051A888579 /* EditorWindowManager.swift */; };
+		D0206DC5ADF03B684EB7A200 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2F78A9F953A63CE9AF8AEA /* PreferencesView.swift */; };
 		D943DDCFED9C82A3A0950199 /* DrawingRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C9DD09CA3FA1FA4D1AE2B0 /* DrawingRenderer.swift */; };
 		E1E932E2D3C071E54755EFBA /* DrawingEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD91043717304C926DE41D1F /* DrawingEditorView.swift */; };
 		EB580889249EB41F72BF3BE2 /* ScreenCaptureOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B989F229E03E38E4364F33 /* ScreenCaptureOverlay.swift */; };
@@ -18,6 +21,7 @@
 
 /* Begin PBXFileReference section */
 		04B989F229E03E38E4364F33 /* ScreenCaptureOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureOverlay.swift; sourceTree = "<group>"; };
+		1F2F78A9F953A63CE9AF8AEA /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		4569478C8A35E2051A888579 /* EditorWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorWindowManager.swift; sourceTree = "<group>"; };
 		57C9DD09CA3FA1FA4D1AE2B0 /* DrawingRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingRenderer.swift; sourceTree = "<group>"; };
 		5C5FF15479C87A38DDC06D24 /* QuickCapture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QuickCapture.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -26,6 +30,8 @@
 		A05735E089FEF64B13BBCB4D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B1732C165C91EBBD70B91131 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BD91043717304C926DE41D1F /* DrawingEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingEditorView.swift; sourceTree = "<group>"; };
+		DAEC2BC88E09D485E4E7807C /* PreferencesWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindowManager.swift; sourceTree = "<group>"; };
+		E722500A628EBB72E622D5A9 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -62,7 +68,10 @@
 				83B3946AA23003E8F4EFC6EA /* DrawingModels.swift */,
 				57C9DD09CA3FA1FA4D1AE2B0 /* DrawingRenderer.swift */,
 				4569478C8A35E2051A888579 /* EditorWindowManager.swift */,
+				E722500A628EBB72E622D5A9 /* HotkeyManager.swift */,
 				6576DEEB7FFA3286572FA5C8 /* main.swift */,
+				1F2F78A9F953A63CE9AF8AEA /* PreferencesView.swift */,
+				DAEC2BC88E09D485E4E7807C /* PreferencesWindowManager.swift */,
 				04B989F229E03E38E4364F33 /* ScreenCaptureOverlay.swift */,
 			);
 			path = Sources;
@@ -142,6 +151,9 @@
 				8C86D48EC584A4FA288E721F /* DrawingModels.swift in Sources */,
 				D943DDCFED9C82A3A0950199 /* DrawingRenderer.swift in Sources */,
 				B7FFF0CFF26A1C17CB510C87 /* EditorWindowManager.swift in Sources */,
+				1D4E1B80A186DD78B646745F /* HotkeyManager.swift in Sources */,
+				D0206DC5ADF03B684EB7A200 /* PreferencesView.swift in Sources */,
+				44E763309CE3C666F69B060A /* PreferencesWindowManager.swift in Sources */,
 				EB580889249EB41F72BF3BE2 /* ScreenCaptureOverlay.swift in Sources */,
 				86A649E8DD461858650F50AD /* main.swift in Sources */,
 			);

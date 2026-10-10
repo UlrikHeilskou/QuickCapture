@@ -19,14 +19,16 @@ final class ScreenCaptureEngine {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
     var menu: NSMenu!
+    var clipboardMenuItem: NSMenuItem!
+    var annotateMenuItem: NSMenuItem!
+    var preferencesMenuItem: NSMenuItem!
     var launchAtLoginMenuItem: NSMenuItem!
-    private var hotKeyRefs: [EventHotKeyRef] = []
 
     override init() {
         super.init()
         setupStatusItem()
         setupMenu()
-        setupGlobalHotkeys()
+        setupHotkeys()
         setupLaunchAtLoginInitialState()
     }
 
@@ -43,10 +45,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             button.image = configuredImage
         }
         
-        button.toolTip = "QuickCapture\n• Left-click or ⌥S: Quick Capture to Clipboard\n• ⇧⌘S or ⇧⌥S: Capture & Annotate\n• Right-click: Menu"
         button.target = self
         button.action = #selector(statusItemClicked(_:))
         button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        updateTooltipsAndMenu()
     }
 
     func setupMenu() {
@@ -58,17 +60,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        let clipboardItem = NSMenuItem(title: "Capture to Clipboard (Option+S)", action: #selector(captureToClipboardAction), keyEquivalent: "s")
-        clipboardItem.keyEquivalentModifierMask = [.option]
-        clipboardItem.target = self
-        menu.addItem(clipboardItem)
+        clipboardMenuItem = NSMenuItem(title: "Capture to Clipboard", action: #selector(captureToClipboardAction), keyEquivalent: "")
+        clipboardMenuItem.target = self
+        menu.addItem(clipboardMenuItem)
 
-        let annotateItem = NSMenuItem(title: "Capture & Annotate... (⇧⌘S / ⇧⌥S)", action: #selector(captureAndAnnotateAction), keyEquivalent: "s")
-        annotateItem.keyEquivalentModifierMask = [.command, .shift]
-        annotateItem.target = self
-        menu.addItem(annotateItem)
+        annotateMenuItem = NSMenuItem(title: "Capture & Annotate...", action: #selector(captureAndAnnotateAction), keyEquivalent: "")
+        annotateMenuItem.target = self
+        menu.addItem(annotateMenuItem)
         
         menu.addItem(NSMenuItem.separator())
+
+        preferencesMenuItem = NSMenuItem(title: "Preferences…", action: #selector(openPreferencesAction), keyEquivalent: ",")
+        preferencesMenuItem.keyEquivalentModifierMask = [.command]
+        preferencesMenuItem.target = self
+        menu.addItem(preferencesMenuItem)
         
         launchAtLoginMenuItem = NSMenuItem(title: "Launch at Login", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
         launchAtLoginMenuItem.target = self
@@ -80,6 +85,42 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let quitItem = NSMenuItem(title: "Quit QuickCapture", action: #selector(quitApp), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
+
+        updateTooltipsAndMenu()
+    }
+
+    func updateTooltipsAndMenu() {
+        let clip = HotkeyManager.shared.clipboardHotkey
+        let annot = HotkeyManager.shared.annotateHotkey
+
+        if let clipboardMenuItem = clipboardMenuItem {
+            clipboardMenuItem.title = "Capture to Clipboard (\(clip.displayString))"
+            clipboardMenuItem.keyEquivalent = clip.keyEquivalent
+            clipboardMenuItem.keyEquivalentModifierMask = clip.keyEquivalentModifierMask
+        }
+
+        if let annotateMenuItem = annotateMenuItem {
+            annotateMenuItem.title = "Capture & Annotate... (\(annot.displayString))"
+            annotateMenuItem.keyEquivalent = annot.keyEquivalent
+            annotateMenuItem.keyEquivalentModifierMask = annot.keyEquivalentModifierMask
+        }
+
+        if let button = statusItem?.button {
+            button.toolTip = "QuickCapture\n• Left-click or \(clip.displayString): Quick Capture to Clipboard\n• \(annot.displayString): Capture & Annotate\n• Right-click: Menu"
+        }
+    }
+
+    func setupHotkeys() {
+        HotkeyManager.shared.onHotkeysChanged = { [weak self] in
+            DispatchQueue.main.async {
+                self?.updateTooltipsAndMenu()
+            }
+        }
+        HotkeyManager.shared.registerAll()
+    }
+
+    @objc func openPreferencesAction() {
+        PreferencesWindowManager.shared.showPreferences()
     }
 
     @objc func statusItemClicked(_ sender: NSStatusBarButton) {
@@ -102,58 +143,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func captureAndAnnotateAction() {
         ScreenCaptureEngine.shared.captureForAnnotation()
-    }
-
-    func setupGlobalHotkeys() {
-        var eventType = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
-        
-        InstallEventHandler(
-            GetEventDispatcherTarget(),
-            { (nextHandler, theEvent, userData) -> OSStatus in
-                var hotKeyID = EventHotKeyID()
-                guard let event = theEvent else {
-                    ScreenCaptureEngine.shared.captureToClipboard()
-                    return noErr
-                }
-                let status = GetEventParameter(
-                    event,
-                    EventParamName(kEventParamDirectObject),
-                    EventParamType(typeEventHotKeyID),
-                    nil,
-                    MemoryLayout<EventHotKeyID>.size,
-                    nil,
-                    &hotKeyID
-                )
-                if status == noErr && (hotKeyID.id == 2 || hotKeyID.id == 3) {
-                    ScreenCaptureEngine.shared.captureForAnnotation()
-                } else {
-                    ScreenCaptureEngine.shared.captureToClipboard()
-                }
-                return noErr
-            },
-            1,
-            &eventType,
-            nil,
-            nil
-        )
-        
-        // 1. Option + S (⌥ + S) -> Capture to Clipboard
-        var hotKeyID1 = EventHotKeyID(signature: OSType(0x514B31), id: 1)
-        var hotKeyRef1: EventHotKeyRef?
-        RegisterEventHotKey(UInt32(kVK_ANSI_S), UInt32(optionKey), hotKeyID1, GetEventDispatcherTarget(), 0, &hotKeyRef1)
-        if let ref = hotKeyRef1 { hotKeyRefs.append(ref) }
-        
-        // 2. Command + Shift + S (⌘ + ⇧ + S) -> Capture for Annotation
-        var hotKeyID2 = EventHotKeyID(signature: OSType(0x514B32), id: 2)
-        var hotKeyRef2: EventHotKeyRef?
-        RegisterEventHotKey(UInt32(kVK_ANSI_S), UInt32(cmdKey | shiftKey), hotKeyID2, GetEventDispatcherTarget(), 0, &hotKeyRef2)
-        if let ref = hotKeyRef2 { hotKeyRefs.append(ref) }
-
-        // 3. Option + Shift + S (⌥ + ⇧ + S) -> Capture for Annotation
-        var hotKeyID3 = EventHotKeyID(signature: OSType(0x514B33), id: 3)
-        var hotKeyRef3: EventHotKeyRef?
-        RegisterEventHotKey(UInt32(kVK_ANSI_S), UInt32(optionKey | shiftKey), hotKeyID3, GetEventDispatcherTarget(), 0, &hotKeyRef3)
-        if let ref = hotKeyRef3 { hotKeyRefs.append(ref) }
     }
 
     @objc func toggleLaunchAtLogin() {
@@ -190,6 +179,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
         }
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        PreferencesWindowManager.shared.showPreferences()
+        return true
+    }
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        if CommandLine.arguments.contains("--preferences") {
+            PreferencesWindowManager.shared.showPreferences()
+        }
+        DistributedNotificationCenter.default().addObserver(
+            self,
+            selector: #selector(openPreferencesAction),
+            name: NSNotification.Name("com.ulrik.QuickCapture.openPreferences"),
+            object: nil
+        )
     }
 
     @objc func quitApp() {
