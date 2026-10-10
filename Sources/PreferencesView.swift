@@ -102,6 +102,7 @@ struct ShortcutRecorderButton: View {
 
 struct PreferencesView: View {
     @ObservedObject var hotkeyManager = HotkeyManager.shared
+    @ObservedObject var updater = UpdateManager.shared
     @State private var launchAtLogin: Bool = false
 
     var body: some View {
@@ -234,10 +235,78 @@ struct PreferencesView: View {
                             .stroke(Color(nsColor: .separatorColor), lineWidth: 0.5)
                     )
 
+                    // Group: Software Updates
+                    VStack(alignment: .leading, spacing: 14) {
+                        Label("Software Updates", systemImage: "arrow.triangle.2.circlepath")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Current Version: v\(AppConfig.appVersion)")
+                                    .fontWeight(.medium)
+                                if let status = updater.statusMessage {
+                                    Text(status)
+                                        .font(.caption)
+                                        .foregroundColor(updater.isUpdateAvailable ? .accentColor : .secondary)
+                                } else {
+                                    Text("Automatic updates via GitHub Releases across all your Macs")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            Spacer()
+
+                            if updater.isUpdateAvailable {
+                                Button(action: {
+                                    updater.downloadAndInstallUpdate()
+                                }) {
+                                    if updater.isDownloading {
+                                        HStack(spacing: 6) {
+                                            ProgressView()
+                                                .controlSize(.small)
+                                            Text("Installing...")
+                                        }
+                                    } else {
+                                        Text("Update & Restart (v\(updater.latestVersion))")
+                                    }
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .disabled(updater.isDownloading)
+                            } else {
+                                Button(action: {
+                                    updater.checkForUpdates(silent: false)
+                                }) {
+                                    if updater.isChecking {
+                                        HStack(spacing: 6) {
+                                            ProgressView()
+                                                .controlSize(.small)
+                                            Text("Checking...")
+                                        }
+                                    } else {
+                                        Text("Check for Updates")
+                                    }
+                                }
+                                .buttonStyle(.bordered)
+                                .disabled(updater.isChecking)
+                            }
+                        }
+                        .padding(10)
+                        .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
+                        .cornerRadius(8)
+                    }
+                    .padding(16)
+                    .background(Color(nsColor: .windowBackgroundColor))
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color(nsColor: .separatorColor), lineWidth: 0.5)
+                    )
+
                     // Group: About
                     HStack {
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("QuickCapture v1.1")
+                            Text("QuickCapture v\(AppConfig.appVersion)")
                                 .font(.footnote)
                                 .fontWeight(.semibold)
                             Text("Native macOS screenshot utility with instant annotation.")

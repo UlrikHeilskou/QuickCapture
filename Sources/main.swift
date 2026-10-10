@@ -74,6 +74,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         preferencesMenuItem.keyEquivalentModifierMask = [.command]
         preferencesMenuItem.target = self
         menu.addItem(preferencesMenuItem)
+
+        let updateItem = NSMenuItem(title: "Check for Updates…", action: #selector(checkForUpdatesAction), keyEquivalent: "")
+        updateItem.target = self
+        menu.addItem(updateItem)
         
         launchAtLoginMenuItem = NSMenuItem(title: "Launch at Login", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
         launchAtLoginMenuItem.target = self
@@ -186,6 +190,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
+    @objc func checkForUpdatesAction() {
+        PreferencesWindowManager.shared.showPreferences()
+        UpdateManager.shared.checkForUpdates(silent: false)
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         if CommandLine.arguments.contains("--preferences") {
             PreferencesWindowManager.shared.showPreferences()
@@ -196,6 +205,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             name: NSNotification.Name("com.ulrik.QuickCapture.openPreferences"),
             object: nil
         )
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            UpdateManager.shared.checkForUpdates(silent: true)
+        }
     }
 
     @objc func quitApp() {

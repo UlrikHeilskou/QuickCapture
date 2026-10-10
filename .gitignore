@@ -8,3 +8,4 @@ DerivedData/
 *.mode2v3
 *.perspectivev3
 *.xcuserstate
+.github_token
